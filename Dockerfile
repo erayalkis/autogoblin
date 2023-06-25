@@ -1,11 +1,21 @@
-FROM rust:1.69.0
+FROM rust:1.69 as build
 
-WORKDIR /usr/src/app
+RUN USER=root cargo new --bin autogoblin
+WORKDIR /autogoblin
 
-COPY ./ ./
-
-ARG DISCORD_TOKEN
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
 
 RUN cargo build --release
+RUN rm src/*.rs
 
-CMD ["./target/release/autogoblin"]
+COPY ./src ./src
+
+RUN rm ./target/release/deps/holodeck*
+RUN cargo build --release
+
+FROM rust:1.69-slim-buster
+
+COPY --from=build /autogoblin/target/release/autogoblin .
+
+CMD ["./autogoblin"]
