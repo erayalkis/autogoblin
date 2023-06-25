@@ -1,27 +1,26 @@
 use once_cell::sync::Lazy;
-use systemstat::{System, Platform, ByteSize, Duration};
+use sysinfo::{System, SystemExt};
+use std::sync::Mutex;
 
-static SYS: once_cell::sync::Lazy<systemstat::platform::linux::PlatformImpl> = Lazy::new(|| {System::new()});
+static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex::new(System::new())});
+
 
 pub struct MachineVitals {
-  pub mem_free: ByteSize,
-  pub mem_total: ByteSize,
-  pub cpu_temp: f32,
-  pub uptime: Duration
+  pub mem_free: u64,
+  pub mem_used: u64
 }
 
 pub fn get_vitals() -> MachineVitals {
+  let mut sys = SYS.lock().unwrap();
 
-  let mem = SYS.memory().unwrap();
-  let cpu_temp = SYS.cpu_temp().unwrap();
-  let uptime = SYS.uptime().unwrap();
+  sys.refresh_all();
 
+  let mem_free = sys.available_memory();
+  let mem_used = sys.used_memory();
 
-  let vitals = MachineVitals  {
-    mem_free: mem.free,
-    mem_total: mem.total,
-    cpu_temp,
-    uptime
+  let vitals = MachineVitals {
+    mem_free,
+    mem_used
   };
 
   return vitals;

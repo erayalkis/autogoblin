@@ -47,17 +47,17 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.channel_id.broadcast_typing(&ctx.http).await?;
+
     let vitals = helpers::get_vitals();
 
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Machine Vitals");
-            e.field("Memory Available", vitals.mem_free, false);
-            e.field("Memory Total", vitals.mem_total, false);
-            e.field("CPU Temperature", vitals.cpu_temp, false);
-            e.footer(|f| {
-                f.text(format!("Uptime: {:?}", vitals.uptime))
-            })
+            e.field("Memory Available", vitals.mem_free, false)
+            // e.footer(|f| {
+            //     f.text(format!("Uptime: {:?}", vitals.uptime))
+            // })
         })
     }).await?;
     Ok(())
