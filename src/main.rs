@@ -6,8 +6,10 @@ use serenity::model::channel::Message;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{StandardFramework, CommandResult};
 
+mod helpers;
+
 #[group]
-#[commands(ping)]
+#[commands(ping, vitals)]
 struct General;
 
 struct Handler;
@@ -39,6 +41,14 @@ async fn main() {
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, "Pong!").await?;
+
+    Ok(())
+}
+
+#[command]
+async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
+    let vitals = helpers::get_vitals();
+    msg.reply(ctx, vitals).await?;
 
     Ok(())
 }
