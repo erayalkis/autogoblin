@@ -20,10 +20,7 @@ pub fn get_vitals() -> MachineVitals {
   let mem_used = sys.used_memory();
 
   sys.refresh_cpu();
-  let mut cpu_usage: f32 = 0.0;
-  for cpu in sys.cpus() {
-    cpu_usage += cpu.cpu_usage();
-  }
+  let cpu_usage = sys.global_cpu_info().cpu_usage();
 
 
   let vitals = MachineVitals {
