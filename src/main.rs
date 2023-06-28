@@ -54,10 +54,38 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Machine Vitals");
-            e.field("Memory Available", vitals.mem_free, false);
+            e.field("Memory Available", vitals.mem_free, true);
             e.field("Memory Used", vitals.mem_used, false);
             e.field("CPU Usage", vitals.cpu_usage, false)
         })
     }).await?;
+    Ok(())
+}
+
+#[command]
+async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.channel_id.broadcast_typing(&ctx.http).await?;
+
+    let servers = helpers::get_servers();
+
+    msg.channel_id.send_message(&ctx.http, |m| {
+        m.embed(|e| {
+            e.title("Server Status");
+
+            for server in servers {
+                let is_online = helpers::probe_port(server.port);
+
+                let text = format!("{}:", server.image);
+                if is_online {
+                    e.field(text, "Online", false);
+                } else {
+                    e.field(text, "Offline", false);
+                }
+            }
+
+            e.field("", "", false)
+        })
+    });
+
     Ok(())
 }
