@@ -1,0 +1,7 @@
+containers:
+  - image: "beestation/beestation"
+    port: 1337
+  - image: "ss14/ag"
+    port: 8080
+  - image: "foundry/ag"
+    port: 30000
