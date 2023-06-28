@@ -10,3 +10,5 @@ serenity = "0.11"
 tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
 sysinfo = "*"
 once_cell = "*"
+serde_yaml = "*"
+reqwest = { version = "0.11", features = ["blocking"] }
