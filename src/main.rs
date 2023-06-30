@@ -67,15 +67,23 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
     let servers = helpers::get_servers();
+    // Avoided using map because async closures are unstable and i didn't wanna mess with that
+    let mut server_statuses: Vec<bool> = Vec::new();
+
+    for server in &servers {
+        let is_online = helpers::probe_port(server.port).await;
+
+        server_statuses.push(is_online);
+    }
 
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Server Status");
 
-            for server in servers {
-                let is_online = helpers::probe_port(server.port);
-
+            for (idx, server) in servers.iter().enumerate() {
                 let text = format!("{}:", server.image);
+                let is_online = server_statuses[idx];
+
                 if is_online {
                     e.field(text, "Online", false);
                 } else {
