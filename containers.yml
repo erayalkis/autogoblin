@@ -2,6 +2,6 @@ containers:
   - image: "beestation/beestation"
     port: 1337
   - image: "ss14/ag"
-    port: 8080
+    port: 1212
   - image: "foundry/ag"
     port: 30000
