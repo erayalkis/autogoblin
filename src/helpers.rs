@@ -16,7 +16,7 @@ pub struct MachineVitals {
 pub struct Server {
   pub image: String,
   pub port: i64,
-  pub endpoint: String
+  pub endpoint: Option<String>
 }
 
 pub fn get_vitals() -> MachineVitals {
@@ -51,7 +51,15 @@ pub fn get_servers() -> Vec<Server> {
     let server_struct = Server {
       image: server.get("image").unwrap().as_str().unwrap().to_string(),
       port: server.get("port").unwrap().as_i64().unwrap(),
-      endpoint: server.get("endpoint").unwrap().as_str().unwrap().to_string()
+      endpoint: match server.get("endpoint") {
+        Some(val) => {
+          Some(val.as_str().unwrap().to_string())
+        }
+
+        None => {
+          None
+        }
+      }
     };
 
     servers_vec.push(server_struct);
@@ -60,12 +68,12 @@ pub fn get_servers() -> Vec<Server> {
   return servers_vec;
 }
 
-pub async fn probe_port(port: &i64, endpoint: Option<&String>) -> bool {
+pub async fn probe_port(port: &i64, endpoint: &Option<String>) -> bool {
 
   let ip = if endpoint.is_none() {
     format!("http://127.0.0.1:{}", port)
   } else {
-    let endp = endpoint.unwrap();
+    let endp = endpoint.clone().unwrap();
     if !endp.starts_with("/") {
       println!("Warning! Endpoint does not start with /, this will result in an invalid request!");
     }

@@ -71,7 +71,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     let mut server_statuses: Vec<bool> = Vec::new();
 
     for server in &servers {
-        let is_online = helpers::probe_port(server.port).await;
+        let is_online = helpers::probe_port(&server.port, &server.endpoint).await;
 
         server_statuses.push(is_online);
     }
