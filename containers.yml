@@ -3,5 +3,6 @@ containers:
     port: 1337
   - image: "ss14/ag"
     port: 1212
+    endpoint: /status
   - image: "foundry/ag"
     port: 30000
