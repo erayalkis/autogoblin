@@ -9,7 +9,7 @@ use serenity::framework::standard::{StandardFramework, CommandResult};
 mod helpers;
 
 #[group]
-#[commands(ping, vitals)]
+#[commands(ping, vitals, servers)]
 struct General;
 
 struct Handler;
@@ -85,7 +85,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 
             e.field("", "", false)
         })
-    });
+    }).await?;
 
     Ok(())
 }
