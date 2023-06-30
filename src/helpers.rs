@@ -13,8 +13,8 @@ pub struct MachineVitals {
   pub cpu_usage: f32
 }
 
-pub struct Server<'a> {
-  pub image: &'a str,
+pub struct Server {
+  pub image: String,
   pub port: i64
 }
 
@@ -39,7 +39,7 @@ pub fn get_vitals() -> MachineVitals {
   return vitals;
 }
 
-pub fn get_servers() -> Vec<Server<'static>> {
+pub fn get_servers() -> Vec<Server> {
   let yaml_data = std::fs::File::open("containers.yml").unwrap();
   let data: serde_yaml::Value = serde_yaml::from_reader(yaml_data).unwrap();
 
@@ -48,7 +48,7 @@ pub fn get_servers() -> Vec<Server<'static>> {
 
   for server in servers {
     let server_struct = Server {
-      image: server.get("image").unwrap().as_str().unwrap(),
+      image: server.get("image").unwrap().as_str().unwrap().to_string(),
       port: server.get("port").unwrap().as_i64().unwrap()
     };
 
