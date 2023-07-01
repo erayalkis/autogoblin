@@ -22,5 +22,6 @@ RUN cargo build --release
 FROM rust:1.69-slim-buster
 
 COPY --from=build /autogoblin/target/release/autogoblin .
+COPY --from=build /autogoblin/containers.yml ./containers.yml
 
 CMD ["./autogoblin"]
