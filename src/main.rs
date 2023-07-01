@@ -54,9 +54,9 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Machine Vitals");
-            e.field("Memory Available", vitals.mem_free, true);
-            e.field("Memory Used", vitals.mem_used, false);
-            e.field("CPU Usage", vitals.cpu_usage, false)
+            e.field("Memory Available", format!("{} MiB", vitals.mem_free / 1024 / 1024), false);
+            e.field("Memory Used", format!("{} MiB", vitals.mem_used / 1024 / 1024), false);
+            e.field("CPU Usage", format!("{:.1}%", vitals.cpu_usage), false)
         })
     }).await?;
     Ok(())
