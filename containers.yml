@@ -1,8 +1,11 @@
 containers:
   - image: "beestation/beestation"
+    name: "beestation"
     port: 1337
   - image: "ss14/ag"
+    name: "ss14"
     port: 1212
     endpoint: /status
   - image: "foundry/ag"
+    name: "foundry"
     port: 30000
