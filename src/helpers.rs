@@ -15,6 +15,7 @@ pub struct MachineVitals {
 
 pub struct Server {
   pub image: String,
+  pub name: String,
   pub port: i64,
   pub endpoint: Option<String>
 }
@@ -50,6 +51,7 @@ pub fn get_servers() -> Vec<Server> {
   for server in servers {
     let server_struct = Server {
       image: server.get("image").unwrap().as_str().unwrap().to_string(),
+      name: server.get("name").unwrap().as_str().unwrap().to_string(),
       port: server.get("port").unwrap().as_i64().unwrap(),
       endpoint: match server.get("endpoint") {
         Some(val) => {
@@ -68,17 +70,17 @@ pub fn get_servers() -> Vec<Server> {
   return servers_vec;
 }
 
-pub async fn probe_port(port: &i64, endpoint: &Option<String>) -> bool {
+pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) -> bool {
 
   let ip = if endpoint.is_none() {
-    format!("http://127.0.0.1:{}", port)
+    format!("http://{}:{}", name, port)
   } else {
     let endp = endpoint.clone().unwrap();
     if !endp.starts_with("/") {
       println!("Warning! Endpoint does not start with /, this will result in an invalid request!");
     }
 
-    format!("http://127.0.0.1:{}{}", port, endp)
+    format!("http://{}:{}{}", name, port, endp)
   };
 
   match reqwest::get(ip).await {
