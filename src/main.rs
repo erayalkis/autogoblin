@@ -40,7 +40,7 @@ async fn main() {
 
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Pong!").await?;
+    msg.reply(ctx, "TESTICULAR TORSION !!! RAHHH !!!").await?;
 
     Ok(())
 }
@@ -59,14 +59,18 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
 
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
-            e.title("Machine Vitals");
+            e.title("Machine Vitals 🧙‍♂️");
+            e.field("", "", false);
             e.colour(499252);
             e.thumbnail("https://i.imgur.com/IMZQqfP.png");
             e.field("Memory Available", format!("{} MiB", vitals.mem_free / 1024 / 1024), false);
+            e.field("", "", false);
             e.field("Memory Used", format!("{} MiB", vitals.mem_used / 1024 / 1024), false);
+            e.field("", "", false);
             e.field("Total CPU Usage", format!("{:.1}%", vitals.cpu_usage), false);
+            e.field("", "", false);
             e.footer(|f| {
-                f.text(format!("Up for {} days, {} hours, {} minutes", days, hours, minutes))
+                f.text(format!("Up for {} days, {} hours, {} minutes 🖥️", days, hours, minutes))
             })
         })
     }).await?;
@@ -94,13 +98,16 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
             e.colour(499252);
 
             for (idx, server) in servers.iter().enumerate() {
-                let text = format!("{}:", server.image);
+                let text = format!("{}:", server.name);
                 let is_online = server_statuses[idx];
 
                 if is_online {
-                    e.field(text, "Online", false);
+                    e.field("", "", false);
+                    e.field(text, "Online ✔️", false);
+                    e.field("", format!("Can be accessed at {}:{}", "127.0.0.1", server.port), false);
                 } else {
-                    e.field(text, "Offline", false);
+                    e.field("", "", false);
+                    e.field(text, "Offline ❌", false);
                 }
             }
 
