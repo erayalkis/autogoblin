@@ -9,7 +9,7 @@ use serenity::framework::standard::{StandardFramework, CommandResult};
 mod helpers;
 
 #[group]
-#[commands(ping, vitals, servers)]
+#[commands(ping, vitals, servers, fireball)]
 struct General;
 
 struct Handler;
@@ -120,7 +120,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Counterspell 🧙‍♂️ !!!! I cast fireball !!!! 👿🔥💥").await?;
-
+    msg.reply(&ctx.http, "https://i.imgur.com/a7fUGsV.gif").await?;
+    
     Ok(())
 }
