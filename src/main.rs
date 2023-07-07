@@ -120,7 +120,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(&ctx.http, "https://i.imgur.com/a7fUGsV.gif").await?;
+    msg.reply(&ctx.http, "https://i.imgur.com/66cTj4C.gif").await?;
     
     Ok(())
 }
