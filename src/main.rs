@@ -55,6 +55,7 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
         m.embed(|e| {
             e.title("Machine Vitals");
             e.colour(499252);
+            e.thumbnail("https://i.imgur.com/IMZQqfP.png");
             e.field("Memory Available", format!("{} MiB", vitals.mem_free / 1024 / 1024), false);
             e.field("Memory Used", format!("{} MiB", vitals.mem_used / 1024 / 1024), false);
             e.field("CPU Usage", format!("{:.1}%", vitals.cpu_usage), false)
@@ -80,6 +81,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Server Status");
+            e.thumbnail("https://i.imgur.com/IMZQqfP.png");
             e.colour(499252);
 
             for (idx, server) in servers.iter().enumerate() {
