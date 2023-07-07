@@ -10,7 +10,8 @@ static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex:
 pub struct MachineVitals {
   pub mem_free: u64,
   pub mem_used: u64,
-  pub cpu_usage: f32
+  pub cpu_usage: f32,
+  pub uptime: u64,
 }
 
 pub struct Server {
@@ -31,11 +32,14 @@ pub fn get_vitals() -> MachineVitals {
   sys.refresh_cpu();
   let cpu_usage = sys.global_cpu_info().cpu_usage();
 
+  let uptime = sys.uptime();
+
 
   let vitals = MachineVitals {
     mem_free,
     mem_used,
-    cpu_usage
+    cpu_usage,
+    uptime
   };
 
   return vitals;
