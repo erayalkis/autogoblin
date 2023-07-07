@@ -40,7 +40,7 @@ async fn main() {
 
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "TESTICULAR TORSION !!! RAHHH !!!").await?;
+    msg.reply(ctx, "Pong!").await?;
 
     Ok(())
 }
@@ -114,6 +114,13 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
             e.field("", "", false)
         })
     }).await?;
+
+    Ok(())
+}
+
+#[command]
+async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(ctx, "Counterspell 🧙‍♂️ !!!! I cast fireball !!!! 👿🔥💥").await?;
 
     Ok(())
 }
