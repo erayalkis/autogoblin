@@ -50,6 +50,12 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
     let vitals = helpers::get_vitals();
+    let mut up = vitals.uptime;
+    let days = up / 86400;
+    up -= days * 86400;
+    let hours = up / 3600;
+    up -= hours * 3600;
+    let minutes = up / 60;
 
     msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
@@ -58,7 +64,10 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
             e.thumbnail("https://i.imgur.com/IMZQqfP.png");
             e.field("Memory Available", format!("{} MiB", vitals.mem_free / 1024 / 1024), false);
             e.field("Memory Used", format!("{} MiB", vitals.mem_used / 1024 / 1024), false);
-            e.field("CPU Usage", format!("{:.1}%", vitals.cpu_usage), false)
+            e.field("Total CPU Usage", format!("{:.1}%", vitals.cpu_usage), false);
+            e.footer(|f| {
+                f.text(format!("Up for {} days, {} hours, {} minutes", days, hours, minutes))
+            })
         })
     }).await?;
     Ok(())
