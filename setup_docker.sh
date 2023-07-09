@@ -2,7 +2,7 @@
 
 source .env
 
-docker build -t autogoblin --build-arg DISCORD_TOKEN=$DISCORD_TOKEN .
+docker build -t erayalkis/autogoblin --build-arg DISCORD_TOKEN=$DISCORD_TOKEN .
 
 echo "Creating autogoblin network, please make sure you run all your other containers in this network."
 
