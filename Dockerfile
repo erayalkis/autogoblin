@@ -19,7 +19,9 @@ COPY ./src ./src
 RUN rm ./target/release/deps/autogoblin*
 RUN cargo build --release
 
-FROM rust:1.69-slim-buster
+FROM debian:buster-20230703-slim
+
+RUN apt-get update && apt-get install -y libssl-dev
 
 COPY --from=build /autogoblin/target/release/autogoblin .
 COPY --from=build /autogoblin/containers.yml ./containers.yml
