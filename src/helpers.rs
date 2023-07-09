@@ -98,17 +98,3 @@ pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) ->
     }
   };
 }
-
-pub async fn up_server(server_name: &String) -> Result<std::process::Child, std::io::Error> {
-  std::process::Command::new("docker")
-    .arg("start")
-    .arg(server_name)
-    .spawn()
-}
-
-pub async fn down_server(server_name: &String) -> Result<std::process::Child, std::io::Error> {
-  std::process::Command::new("docker")
-    .arg("stop")
-    .arg(server_name)
-    .spawn()
-}

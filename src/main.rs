@@ -5,12 +5,11 @@ use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{StandardFramework, CommandResult};
-use sysinfo::SystemExt;
 
 mod helpers;
 
 #[group]
-#[commands(ping, vitals, servers, fireball, up, down)]
+#[commands(ping, vitals, servers, fireball)]
 struct General;
 
 struct Handler;
@@ -23,9 +22,6 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix(">"))
         .group(&GENERAL_GROUP);
-
-    let mut sys = helpers::SYS.lock().unwrap();
-    sys.refresh_all();
 
     // Login with a bot token from the environment
     let token = env::var("DISCORD_TOKEN").expect("token");
@@ -126,36 +122,5 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(&ctx.http, "https://i.imgur.com/66cTj4C.gif").await?;
     
-    Ok(())
-}
-
-#[command]
-async fn up(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.channel_id.broadcast_typing(&ctx.http).await?;
-
-    match helpers::up_server(&msg.content).await {
-        Ok(_) => {
-            msg.reply(&ctx.http, format!("Server {} is up!", &msg.content)).await?;
-        }
-        Err(_) => {
-            msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
-        }
-    }
-    Ok(())
-}
-
-#[command]
-async fn down(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.channel_id.broadcast_typing(&ctx.http).await?;
-
-    match helpers::down_server(&msg.content).await {
-        Ok(_) => {
-            msg.reply(&ctx.http, format!("Server {} has been stopped!", &msg.content)).await?;
-        }
-
-        Err(_) => {
-            msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
-        }
-    }
     Ok(())
 }
