@@ -5,6 +5,7 @@ use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{StandardFramework, CommandResult};
+use sysinfo::SystemExt;
 
 mod helpers;
 
@@ -22,6 +23,9 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix(">"))
         .group(&GENERAL_GROUP);
+
+    let mut sys = helpers::SYS.lock().unwrap();
+    sys.refresh_all();
 
     // Login with a bot token from the environment
     let token = env::var("DISCORD_TOKEN").expect("token");
