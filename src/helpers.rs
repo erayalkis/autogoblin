@@ -4,7 +4,7 @@ use std::sync::Mutex;
 use serde_yaml;
 use reqwest;
 
-static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex::new(System::new())});
+pub static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex::new(System::new())});
 
 
 pub struct MachineVitals {
