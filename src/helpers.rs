@@ -3,9 +3,9 @@ use sysinfo::{System, SystemExt, CpuExt};
 use std::sync::Mutex;
 use serde_yaml;
 use reqwest;
+use rand::Rng;
 
 pub static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex::new(System::new())});
-
 
 pub struct MachineVitals {
   pub mem_free: u64,
@@ -97,4 +97,8 @@ pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) ->
       return false
     }
   };
+}
+
+pub async fn generate_random_number(start: u64, end: u64) -> u64 {
+  rand::thread_rng().gen_range(start, end)
 }
