@@ -153,7 +153,8 @@ async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn up(ctx: &Context, msg: &Message) -> CommandResult {
-    let res = helpers::up_server(&msg.content).await;
+    let content = helpers::get_argument_from_command(&msg.content);
+    let res = helpers::up_server(content).await;
 
     match res {
         Ok(resp) => {
