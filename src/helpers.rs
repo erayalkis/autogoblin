@@ -74,7 +74,7 @@ pub fn get_servers() -> Vec<Server> {
   return servers_vec;
 }
 
-pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) -> bool {
+pub async fn probe_port(port: &i64, endpoint: &Option<String>) -> bool {
 
   let ip = if endpoint.is_none() {
     format!("http://localhost:{}", port)
