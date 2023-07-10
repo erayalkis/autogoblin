@@ -153,11 +153,11 @@ async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn up(ctx: &Context, msg: &Message) -> CommandResult {
-    let res = helpers::up_server(&msg.content()).await;
+    let res = helpers::up_server(&msg.content).await;
 
     match res {
         Ok(err) => {
-            if (res.ok()) {
+            if res.is_ok() {
                 msg.reply(&ctx.http, "Server has been successfully started!");
             } else {
                 msg.reply(&ctx.http, "Something went wrong while starting the server!");
