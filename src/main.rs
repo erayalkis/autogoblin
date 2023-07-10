@@ -9,7 +9,7 @@ use serenity::framework::standard::{StandardFramework, CommandResult};
 mod helpers;
 
 #[group]
-#[commands(ping, vitals, servers, fireball)]
+#[commands(ping, vitals, servers, fireball, coinflip, up, down)]
 struct General;
 
 struct Handler;
@@ -122,5 +122,23 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(&ctx.http, "https://i.imgur.com/66cTj4C.gif").await?;
     
+    Ok(())
+}
+
+#[command]
+async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
+
+    Ok(())
+}
+
+#[command]
+async fn up(ctx: &Context, msg: &Message) -> CommandResult {
+
+    Ok(())
+}
+
+#[command]
+async fn down(ctx: &Context, msg: &Message) -> CommandResult {
+
     Ok(())
 }
