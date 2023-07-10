@@ -77,14 +77,14 @@ pub fn get_servers() -> Vec<Server> {
 pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) -> bool {
 
   let ip = if endpoint.is_none() {
-    format!("http://{}:{}", name, port)
+    format!("http://localhost:{}", port)
   } else {
     let endp = endpoint.clone().unwrap();
     if !endp.starts_with("/") {
       println!("Warning! Endpoint does not start with /, this will result in an invalid request!");
     }
 
-    format!("http://{}:{}{}", name, port, endp)
+    format!("http://localhost:{}{}", port, endp)
   };
 
   match reqwest::get(ip).await {
@@ -104,13 +104,13 @@ pub async fn generate_random_number(start: u64, end: u64) -> u64 {
 }
 
 pub async fn up_server(server_name: &str) -> Result<Response, Error> {
-  let url = format!("host.docker.internal:8000/up/{}", server_name);
+  let url = format!("http://localhost:8000/up/{}", server_name);
 
   reqwest::get(url).await
 }
 
 pub async fn down_server(server_name: &str) -> Result<Response, Error> {
-  let url = format!("host.docker.internal:8000/down/{}", server_name);
+  let url = format!("http://localhost:8000/down/{}", server_name);
 
   reqwest::get(url).await 
 }
