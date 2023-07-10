@@ -156,16 +156,16 @@ async fn up(ctx: &Context, msg: &Message) -> CommandResult {
     let res = helpers::up_server(&msg.content).await;
 
     match res {
-        Ok(err) => {
-            if res.is_ok() {
-                msg.reply(&ctx.http, "Server has been successfully started!");
+        Ok(resp) => {
+            if resp.status() == 200 {
+                msg.reply(&ctx.http, "Server has been successfully started!").await?;
             } else {
-                msg.reply(&ctx.http, "Something went wrong while starting the server!");
+                msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
             }
         }
 
-        Err(err) => {
-            msg.reply(&ctx.http, "Something went wrong while starting the server!");
+        Err(_) => {
+            msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
         }
     }
     Ok(())
@@ -173,6 +173,20 @@ async fn up(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn down(ctx: &Context, msg: &Message) -> CommandResult {
+    let res = helpers::down_server(&msg.content).await;
 
+    match res {
+        Ok(resp) => {
+            if resp.status() == 200 {
+                msg.reply(&ctx.http, "Server has been successfully stopped!").await?;
+            } else {
+                msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
+            }
+        }
+
+        Err(_) => {
+            msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
+        }
+    }
     Ok(())
 }
