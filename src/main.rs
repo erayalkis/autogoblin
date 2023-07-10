@@ -1,4 +1,5 @@
 use std::env;
+use std::time::Duration;
 
 use serenity::async_trait;
 use serenity::prelude::*;
@@ -127,13 +128,46 @@ async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(&ctx.http, "Sure thing, boss!").await?;
+    msg.channel_id.broadcast_typing(&ctx.http).await?;
 
+    let num = helpers::generate_random_number(0, 2).await;
+
+    println!("Got random num: {}", num);
+    std::thread::sleep(Duration::new(2, 0));
+    match num {
+        0 => {
+            msg.reply(&ctx.http, "We gots a heads, boss!").await?;
+        }
+
+        1 => {
+            msg.reply(&ctx.http, "It's a tails, boss!").await?;
+        }
+        
+        2_u64..=u64::MAX => {
+
+        }
+    }
     Ok(())
 }
 
 #[command]
 async fn up(ctx: &Context, msg: &Message) -> CommandResult {
+    let res = helpers::up_server(&msg.content()).await;
 
+    match res {
+        Ok(err) => {
+            if (res.ok()) {
+                msg.reply(&ctx.http, "Server has been successfully started!");
+            } else {
+                msg.reply(&ctx.http, "Something went wrong while starting the server!");
+            }
+        }
+
+        Err(err) => {
+            msg.reply(&ctx.http, "Something went wrong while starting the server!");
+        }
+    }
     Ok(())
 }
 
