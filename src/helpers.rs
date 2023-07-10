@@ -2,7 +2,7 @@ use once_cell::sync::Lazy;
 use sysinfo::{System, SystemExt, CpuExt};
 use std::sync::Mutex;
 use serde_yaml;
-use reqwest;
+use reqwest::{self, Response, Error};
 use rand::Rng;
 
 pub static SYS: once_cell::sync::Lazy<Mutex<sysinfo::System>> = Lazy::new(|| {Mutex::new(System::new())});
@@ -101,4 +101,21 @@ pub async fn probe_port(port: &i64, name: &String, endpoint: &Option<String>) ->
 
 pub async fn generate_random_number(start: u64, end: u64) -> u64 {
   rand::thread_rng().gen_range(start, end)
+}
+
+pub async fn up_server(server_name: &String) -> Result<Response, Error> {
+  let url = format!("host.docker.internal:8000/up/{}", server_name);
+
+  reqwest::get(url).await
+}
+
+pub async fn down_server(server_name: &String) -> Result<Response, Error> {
+  let url = format!("host.docker.internal:8000/down/{}", server_name);
+
+  reqwest::get(url).await 
+}
+
+pub fn get_argument_from_command(command_content: &String) -> String {
+  let split: Vec<String> = command_content.split(" ").collect();
+  split[1]
 }
