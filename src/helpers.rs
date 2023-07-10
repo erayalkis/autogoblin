@@ -103,19 +103,19 @@ pub async fn generate_random_number(start: u64, end: u64) -> u64 {
   rand::thread_rng().gen_range(start, end)
 }
 
-pub async fn up_server(server_name: &String) -> Result<Response, Error> {
+pub async fn up_server(server_name: &str) -> Result<Response, Error> {
   let url = format!("host.docker.internal:8000/up/{}", server_name);
 
   reqwest::get(url).await
 }
 
-pub async fn down_server(server_name: &String) -> Result<Response, Error> {
+pub async fn down_server(server_name: &str) -> Result<Response, Error> {
   let url = format!("host.docker.internal:8000/down/{}", server_name);
 
   reqwest::get(url).await 
 }
 
-pub fn get_argument_from_command(command_content: &String) -> String {
-  let split: Vec<String> = command_content.split(" ").collect();
+pub fn get_argument_from_command(command_content: &String) -> &str {
+  let split: Vec<&str> = command_content.split(" ").collect();
   split[1]
 }
