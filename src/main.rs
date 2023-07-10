@@ -165,7 +165,8 @@ async fn up(ctx: &Context, msg: &Message) -> CommandResult {
             }
         }
 
-        Err(_) => {
+        Err(err) => {
+            println!("Error: {}", err);
             msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
         }
     }
@@ -174,7 +175,8 @@ async fn up(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn down(ctx: &Context, msg: &Message) -> CommandResult {
-    let res = helpers::down_server(&msg.content).await;
+    let content = helpers::get_argument_from_command(&msg.content);
+    let res = helpers::down_server(content).await;
 
     match res {
         Ok(resp) => {
@@ -185,7 +187,8 @@ async fn down(ctx: &Context, msg: &Message) -> CommandResult {
             }
         }
 
-        Err(_) => {
+        Err(err) => {
+            println!("Error: {}", err);
             msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
         }
     }
