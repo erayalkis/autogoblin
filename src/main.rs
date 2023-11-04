@@ -127,7 +127,16 @@ async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(&ctx.http, "Sure thing, boss!").await?;
+    match helpers::generate_random_number(0, 2).await {
+        0 => {
+            msg.reply(&ctx.http, "On it, boss!").await?;
+        }
+
+        1 => {
+            msg.reply(&ctx.http, "Sure thing, boss!").await?;
+        }
+    }
+
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
     match helpers::generate_random_number(0, 2).await {
