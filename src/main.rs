@@ -135,6 +135,10 @@ async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
         1 => {
             msg.reply(&ctx.http, "Sure thing, boss!").await?;
         }
+
+	2_u64..=u64::MAX => {
+	
+	}
     }
 
     msg.channel_id.broadcast_typing(&ctx.http).await?;
