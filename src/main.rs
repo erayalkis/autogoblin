@@ -1,5 +1,6 @@
 use std::env;
 
+use local_ip_address::local_ip;
 use serenity::async_trait;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{CommandResult, StandardFramework};
@@ -98,6 +99,7 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
 async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
+    let local = local_ip().unwrap();
     let servers = helpers::get_servers();
     // Avoided using map because async closures are unstable and i didn't wanna mess with that
     let mut server_statuses: Vec<bool> = Vec::new();
@@ -119,13 +121,13 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
                     let text = format!("{}:", server.name);
                     let server_ip = match &server.ip {
                         Some(val) => val.to_string(),
-                        None => "127.0.0.1".to_string(),
+                        None => local.to_string(),
                     };
                     let is_online = server_statuses[idx];
 
                     if is_online {
                         e.field("", "", false);
-                        e.field(text, "Online ✔️", false);
+                        e.field(text, "Online ✅", false);
                         e.field(
                             "",
                             format!("Can be accessed at {}:{}", server_ip, server.port),
