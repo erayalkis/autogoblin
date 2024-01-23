@@ -1,10 +1,10 @@
 use std::env;
 
 use serenity::async_trait;
-use serenity::prelude::*;
-use serenity::model::channel::Message;
 use serenity::framework::standard::macros::{command, group};
-use serenity::framework::standard::{StandardFramework, CommandResult};
+use serenity::framework::standard::{CommandResult, StandardFramework};
+use serenity::model::channel::Message;
+use serenity::prelude::*;
 
 mod helpers;
 
@@ -57,27 +57,44 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
     up -= hours * 3600;
     let minutes = up / 60;
 
-    msg.channel_id.send_message(&ctx.http, |m| {
-        m.embed(|e| {
-            e.title("Machine Vitals 🧙‍♂️");
-            e.field("", "", false);
-            e.colour(499252);
-            e.thumbnail("https://i.imgur.com/IMZQqfP.png");
-            e.field("Memory Available", format!("{} MiB", vitals.mem_free / 1024 / 1024), false);
-            e.field("", "", false);
-            e.field("Memory Used", format!("{} MiB", vitals.mem_used / 1024 / 1024), false);
-            e.field("", "", false);
-            e.field("Total CPU Usage", format!("{:.1}%", vitals.cpu_usage), false);
-            e.field("", "", false);
-            e.footer(|f| {
-                f.text(format!("Up for {} days, {} hours, {} minutes 🖥️", days, hours, minutes))
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Machine Vitals 🧙‍♂️");
+                e.field("", "", false);
+                e.colour(499252);
+                e.thumbnail("https://i.imgur.com/IMZQqfP.png");
+                e.field(
+                    "Memory Available",
+                    format!("{} MiB", vitals.mem_free / 1024 / 1024),
+                    false,
+                );
+                e.field("", "", false);
+                e.field(
+                    "Memory Used",
+                    format!("{} MiB", vitals.mem_used / 1024 / 1024),
+                    false,
+                );
+                e.field("", "", false);
+                e.field(
+                    "Total CPU Usage",
+                    format!("{:.1}%", vitals.cpu_usage),
+                    false,
+                );
+                e.field("", "", false);
+                e.footer(|f| {
+                    f.text(format!(
+                        "Up for {} days, {} hours, {} minutes 🖥️",
+                        days, hours, minutes
+                    ))
+                })
             })
         })
-    }).await?;
+        .await?;
     Ok(())
 }
 
-#[command]  
+#[command]
 async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
@@ -86,42 +103,53 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
     let mut server_statuses: Vec<bool> = Vec::new();
 
     for server in &servers {
-        let is_online = helpers::probe_port(&server.port, &server.endpoint).await;
+        let is_online = helpers::probe_port(&server.port, &server.endpoint, &server.ip).await;
 
         server_statuses.push(is_online);
     }
 
-    msg.channel_id.send_message(&ctx.http, |m| {
-        m.embed(|e| {
-            e.title("Server Status");
-            e.thumbnail("https://i.imgur.com/IMZQqfP.png");
-            e.colour(499252);
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Server Status");
+                e.thumbnail("https://i.imgur.com/IMZQqfP.png");
+                e.colour(499252);
 
-            for (idx, server) in servers.iter().enumerate() {
-                let text = format!("{}:", server.name);
-                let is_online = server_statuses[idx];
+                for (idx, server) in servers.iter().enumerate() {
+                    let text = format!("{}:", server.name);
+                    let server_ip = match server.ip {
+                        Some(val) => val.to_string(),
+                        None => "127.0.0.1".to_string(),
+                    };
+                    let is_online = server_statuses[idx];
 
-                if is_online {
-                    e.field("", "", false);
-                    e.field(text, "Online ✔️", false);
-                    e.field("", format!("Can be accessed at {}:{}", "127.0.0.1", server.port), false);
-                } else {
-                    e.field("", "", false);
-                    e.field(text, "Offline ❌", false);
+                    if is_online {
+                        e.field("", "", false);
+                        e.field(text, "Online ✔️", false);
+                        e.field(
+                            "",
+                            format!("Can be accessed at {}:{}", server_ip, server.port),
+                            false,
+                        );
+                    } else {
+                        e.field("", "", false);
+                        e.field(text, "Offline ❌", false);
+                    }
                 }
-            }
 
-            e.field("", "", false)
+                e.field("", "", false)
+            })
         })
-    }).await?;
+        .await?;
 
     Ok(())
 }
 
 #[command]
 async fn fireball(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(&ctx.http, "https://i.imgur.com/66cTj4C.gif").await?;
-    
+    msg.reply(&ctx.http, "https://i.imgur.com/66cTj4C.gif")
+        .await?;
+
     Ok(())
 }
 
@@ -136,9 +164,7 @@ async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
             msg.reply(&ctx.http, "Sure thing, boss!").await?;
         }
 
-	2_u64..=u64::MAX => {
-	
-	}
+        2_u64..=u64::MAX => {}
     }
 
     msg.channel_id.broadcast_typing(&ctx.http).await?;
@@ -151,10 +177,8 @@ async fn coinflip(ctx: &Context, msg: &Message) -> CommandResult {
         1 => {
             msg.reply(&ctx.http, "It's a tails, boss!").await?;
         }
-        
-        2_u64..=u64::MAX => {
 
-        }
+        2_u64..=u64::MAX => {}
     }
     Ok(())
 }
@@ -167,15 +191,18 @@ async fn up(ctx: &Context, msg: &Message) -> CommandResult {
     match res {
         Ok(resp) => {
             if resp.status() == 200 {
-                msg.reply(&ctx.http, "Server has been successfully started!").await?;
+                msg.reply(&ctx.http, "Server has been successfully started!")
+                    .await?;
             } else {
-                msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
+                msg.reply(&ctx.http, "Something went wrong while starting the server!")
+                    .await?;
             }
         }
 
         Err(err) => {
             println!("Error: {}", err);
-            msg.reply(&ctx.http, "Something went wrong while starting the server!").await?;
+            msg.reply(&ctx.http, "Something went wrong while starting the server!")
+                .await?;
         }
     }
     Ok(())
@@ -189,15 +216,18 @@ async fn down(ctx: &Context, msg: &Message) -> CommandResult {
     match res {
         Ok(resp) => {
             if resp.status() == 200 {
-                msg.reply(&ctx.http, "Server has been successfully stopped!").await?;
+                msg.reply(&ctx.http, "Server has been successfully stopped!")
+                    .await?;
             } else {
-                msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
+                msg.reply(&ctx.http, "Something went wrong while stopping the server!")
+                    .await?;
             }
         }
 
         Err(err) => {
             println!("Error: {}", err);
-            msg.reply(&ctx.http, "Something went wrong while stopping the server!").await?;
+            msg.reply(&ctx.http, "Something went wrong while stopping the server!")
+                .await?;
         }
     }
     Ok(())
