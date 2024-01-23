@@ -50,6 +50,7 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.broadcast_typing(&ctx.http).await?;
 
+    let local = local_ip().unwrap();
     let vitals = helpers::get_vitals();
     let mut up = vitals.uptime;
     let days = up / 86400;
@@ -82,6 +83,8 @@ async fn vitals(ctx: &Context, msg: &Message) -> CommandResult {
                     format!("{:.1}%", vitals.cpu_usage),
                     false,
                 );
+                e.field("", "", false);
+                e.field("Server IP Address", local, false);
                 e.field("", "", false);
                 e.footer(|f| {
                     f.text(format!(
