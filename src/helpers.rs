@@ -21,7 +21,7 @@ pub struct Server {
     pub name: String,
     pub port: i64,
     pub endpoint: Option<String>,
-    pub ip: Option<u32>,
+    pub ip: Option<String>,
 }
 
 pub fn get_vitals() -> MachineVitals {
@@ -65,7 +65,7 @@ pub fn get_servers() -> Vec<Server> {
                 None => None,
             },
             ip: match server.get("ip") {
-                Some(val) => Some(val.as_u64().unwrap() as u32),
+                Some(val) => Some(val.as_str().unwrap().to_string()),
                 None => None,
             },
         };
@@ -76,14 +76,14 @@ pub fn get_servers() -> Vec<Server> {
     return servers_vec;
 }
 
-pub async fn probe_port(port: &i64, endpoint: &Option<String>, ip: &Option<u32>) -> bool {
+pub async fn probe_port(port: &i64, endpoint: &Option<String>, ip: &Option<String>) -> bool {
     let local = local_ip().unwrap();
 
-    let ip = if endpoint.is_none() {
+    let target_ip = if endpoint.is_none() {
         if ip.is_none() {
             format!("http://{}:{}", local, port)
         } else {
-            format!("http://{}:{}", ip.unwrap(), port)
+            format!("http://{}:{}", ip.as_ref().unwrap(), port)
         }
     } else {
         let endp = endpoint.clone().unwrap();
@@ -96,11 +96,12 @@ pub async fn probe_port(port: &i64, endpoint: &Option<String>, ip: &Option<u32>)
         if ip.is_none() {
             format!("http://{}:{}{}", local, port, endp)
         } else {
-            format!("http://{}:{}{}", ip.unwrap(), port, endp)
+            format!("http://{}:{}{}", ip.as_ref().unwrap(), port, endp)
         }
     };
 
-    match reqwest::get(ip).await {
+    println!("Fetching {}", target_ip);
+    match reqwest::get(target_ip).await {
         Ok(res) => {
             println!("{:?}", res);
             return true;

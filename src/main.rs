@@ -117,7 +117,7 @@ async fn servers(ctx: &Context, msg: &Message) -> CommandResult {
 
                 for (idx, server) in servers.iter().enumerate() {
                     let text = format!("{}:", server.name);
-                    let server_ip = match server.ip {
+                    let server_ip = match &server.ip {
                         Some(val) => val.to_string(),
                         None => "127.0.0.1".to_string(),
                     };
